@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>EcommerceApp</h1>
+        <div class="navbar-links">
+            <p class="navbar-link"><a href="index.html">Home</a></p>
+            <p class="navbar-link"><a href="collection.html">Collections</a></p>
+            <p class="navbar-link"><a href="contact.html">Contact</a></p>
+            <p class="navbar-link"><a href="cart.html">Cart</a></p>
+        </div>
+    </nav>
+    
+    <div class="product-section">
+        <h2 id="category-title">Products</h2>
+        <div id="product-list" class="products"></div>
+    </div>
+
+    <!-- Side Navbar -->
+<div class="side-navbar">
+    <p style="text-align: right;" onclick="closeNavbar()">
+        <i class="fa-solid fa-xmark"></i>
+    </p>
+    <div class="side-navbar-links">
+        <p class="side-navbar-link"><a href="index.html">Home</a></p>
+        <p class="side-navbar-link"><a href="collection.html">Collections</a></p>
+        <p class="side-navbar-link"><a href="cart.html">Cart</a></p>
+        <p class="side-navbar-link"><a href="contact.html">Contact</a></p>
+    </div>
+</div>
+
+    
+    <script>
+        // Predefined product data
+        const productsData = {
+            "Men's Clothing": [
+                { name: "Men's T-Shirt", price: 499.99, description: "Comfortable cotton t-shirt for men. Available in various sizes." },
+                { name: "Men's Jeans", price: 1299.99, description: "Classic blue denim jeans with a slim fit." },
+                { name: "Men's Jacket", price: 2499.99, description: "Warm and stylish winter jacket for men." }
+            ],
+            "Women's Clothing": [
+                { name: "Women's Dress", price: 1499.99, description: "Elegant and stylish dress for women, perfect for any occasion." },
+                { name: "Women's Top", price: 799.99, description: "Casual top with a comfortable fit, ideal for daily wear." },
+                { name: "Women's Saree", price: 1999.99, description: "Traditional saree with premium fabric and intricate designs." }
+            ],
+            "Kids' Clothing": [
+                { name: "Kids T-Shirt", price: 399.99, description: "Soft and breathable t-shirt for kids." },
+                { name: "Kids Jacket", price: 799.99, description: "Warm and cozy winter jacket for kids." },
+                { name: "Kids Jeans", price: 999.99, description: "Durable and stylish denim jeans for kids." }
+            ],
+            "Accessories": [
+                { name: "Smartwatch", price: 3999.99, description: "Feature-rich smartwatch with heart rate monitor and Bluetooth connectivity." },
+                { name: "Sunglasses", price: 999.99, description: "UV-protected sunglasses for all-day comfort." },
+                { name: "Leather Wallet", price: 699.99, description: "Premium quality leather wallet with multiple card slots." }
+            ],
+            "Home Appliances": [
+                { name: "Microwave Oven", price: 7499.99, description: "High-quality microwave oven with multiple cooking settings." },
+                { name: "Refrigerator", price: 25999.99, description: "Energy-efficient double-door refrigerator with ample storage." },
+                { name: "Washing Machine", price: 18999.99, description: "Fully automatic washing machine with smart wash technology." }
+            ],
+            "Grocery": [
+                { name: "Organic Rice", price: 999.99, description: "5kg pack of organic rice, free from harmful chemicals." },
+                { name: "Wheat Flour", price: 499.99, description: "Premium quality wheat flour for daily cooking." },
+                { name: "Olive Oil", price: 799.99, description: "Cold-pressed extra virgin olive oil, 1-liter bottle." }
+            ],
+            "Books": [
+                { name: "Fiction Novel", price: 499.99, description: "Bestselling fiction novel with an engaging storyline." },
+                { name: "Self-Help Book", price: 299.99, description: "Inspirational self-help book for personal growth and success." },
+                { name: "Technology Guide", price: 899.99, description: "Comprehensive guide on the latest technological advancements." }
+            ],
+            "Furniture": [
+                { name: "Office Chair", price: 2999.99, description: "Ergonomic office chair with lumbar support for long working hours." },
+                { name: "Dining Table Set", price: 12999.99, description: "Modern dining table set with four chairs." },
+                { name: "Wooden Wardrobe", price: 15999.99, description: "Spacious wooden wardrobe with multiple compartments." }
+            ]
+        };
+        
+        // Function to get category from URL
+        function getCategoryFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get("category") || "Accessories";
+        }
+        
+        // Function to load products
+        function loadProducts() {
+            const category = getCategoryFromURL();
+            document.getElementById("category-title").textContent = category + " Products";
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = "";
+            
+            if (productsData[category]) {
+                productsData[category].forEach(product => {
+                    const productDiv = document.createElement("div");
+                    productDiv.classList.add("products-box");
+                    productDiv.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+                        <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+                        <button onclick="removeFromCart('${product.name}')">Delete</button>
+                    `;
+                    productList.appendChild(productDiv);
+                });
+            } else {
+                productList.innerHTML = "<p>No products found for this category.</p>";
+            }
+        }
+        
+        // Function to add item to cart and store it in localStorage
+        function addToCart(productName, price) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push({ name: productName, price: price });
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            alert(productName + " added to cart!");
+        }
+
+        // Function to remove item from cart
+        function removeFromCart(productName) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let updatedCart = cart.filter(item => item.name !== productName);
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+            alert(productName + " removed from cart!");
+        }
+        
+        // Load products on page load
+        window.onload = loadProducts;
+
+        
+    </script>
+</body>
+</html>
